@@ -31,19 +31,48 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  let variantText = null;
+
+  if (variant == 'on-sale') {
+    variantText = 'Sale';
+  } else if (variant == 'new-release') {
+    variantText = 'Just Realised!';
+  }
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
+          {variantText && (
+            <Variant
+              style={{
+                '--bg-color':
+                  variant === 'on-sale' ? COLORS.primary : COLORS.secondary,
+              }}
+            >
+              {variantText}
+            </Variant>
+          )}
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price
+            style={{
+              '--text-color': variant === 'on-sale' ? COLORS.gray[700] : 'inherit',
+              '--text-decoration':
+                variant === 'on-sale' ? 'line-through' : 'none',
+            }}
+          >
+            {formatPrice(price)}
+          </Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {variant == 'on-sale' && (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          )}
         </Row>
       </Wrapper>
     </Link>
@@ -79,7 +108,10 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: var(--text-color);
+  text-decoration: var(--text-decoration);
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -88,6 +120,19 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+`;
+
+const Variant = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -8px;
+  padding: 12px;
+  background-color: var(--bg-color);
+  color: ${COLORS.white};
+  font-weight: 700;
+  font-size: 14px;
+  font-family: 'Raleway';
+  border-radius: 2px;
 `;
 
 export default ShoeCard;
